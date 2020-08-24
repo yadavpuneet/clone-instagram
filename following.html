@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Instagram</title>
+</head>
+<style>
+
+    a {
+        color: cornflowerblue;
+    }
+    .thumbnail {
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .thumbnail:hover {
+        opacity: 0.7;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+
+    .modal-container {
+        margin: auto;
+        display: table;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .modal-content {
+        display: table-cell;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .modal-image {
+        max-height: 70vh;
+        max-width: 55vw
+    }
+
+    .modal-text {
+        max-width: 55vw;
+        max-height: 10vh;
+        overflow-y: auto;
+        text-align: left;
+        color: #ccc;
+    }
+
+    .modal-container, .modal-text {
+        -webkit-animation-name: zoom;
+        -webkit-animation-duration: 0.6s;
+        animation-name: zoom;
+        animation-duration: 0.6s;
+    }
+
+    @-webkit-keyframes zoom {
+        from {
+            -webkit-transform: scale(0)
+        }
+        to {
+            -webkit-transform: scale(1)
+        }
+    }
+
+    @keyframes zoom {
+        from {
+            transform: scale(0)
+        }
+        to {
+            transform: scale(1)
+        }
+    }
+
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #bbb;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    @media only screen and (max-width: 700px) {
+        .modal-container {
+            width: 100%;
+        }
+    }
+
+</style>
+<body>
+
+<div align="center">
+    <p>Hello {% if user %}{{ user.email().upper().split('@')[0] }}{% else %}GUEST{% endif %}! Welcome to the
+        Instagram<br/>
+        <a href='/'>home</a>
+        {% if profile %}
+        <a href='/profile?id={{ profile.key.urlsafe() }}'>back</a>
+        {% endif %}
+        <a href='{{ url }}'>{{ url_string }}</a>
+    </p>
+</div>
+<hr/>
+
+{% if profile %}
+<table width="100%">
+    <tr>
+        <td width="30%" valign="top">
+            <div style="border-style: double; padding: 10px;">
+                <table width="100%" cellspacing="10px">
+                    <tr>
+                        <td>
+                            Profile Name: <h4 style="display: inline-block">{{ profile.name }}</h4>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% if profile!=member %}
+                            {% if profile.key in member.following %}
+                            <a href="/unfollow?id={{ profile.key.urlsafe() }}">
+                                <button><h4>Unfollow</h4></button>
+                            </a>
+                            {% else %}
+                            <a href="/follow?id={{ profile.key.urlsafe() }}">
+                                <button><h4>Follow</h4></button>
+                            </a>
+                            {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+        </td>
+
+        <td width="40%" valign="top">
+            <div id="doScroll"
+                 style="max-height: 100vh; width: 39.25vw; position: fixed; overflow-y: auto; text-align: center; overflow-y: hidden;">
+                <div style="border-style: double;">
+                    <h4 style="text-align: center; display: inline-block">Following</h4>
+                </div>
+                <br/>
+                {% for key in profile.following %}
+                <div style="border-style: double; padding: 10px">
+                    <table width="100%">
+                        <tr>
+                            <td>
+                                <table width="100%">
+                                    <tr>
+                                        <td align="left">
+                                            Name: <h4 style="display: inline-block">{{ key.get().name }}</h4>
+                                        </td>
+                                        <td align="right">
+                                            <a href="/profile?id={{ key.urlsafe() }}">Visit Profile</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+                {% endfor %}
+                <div>
+                    <p>
+                        <br/>
+                        <br/>
+                        <br/>
+                    </p>
+                </div>
+            </div>
+        </td>
+        <td width="30%">
+            <div style="border-style: double; padding: 10px;">
+                <table width="100%" cellspacing="10px">
+                    <tr>
+                        <td>
+                            Followers: <h4 style="display: inline-block">{{ profile.followers|length }}</h4>
+                        </td>
+                        <td align="right">
+                            <a href="/followers?id={{ profile.key.urlsafe() }}">View All</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Following: <h4 style="display: inline-block">{{ profile.following|length }}</h4>
+                        </td>
+                        <td align="right">
+                            <a href="/following?id={{ profile.key.urlsafe() }}">View All</a>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+        </td>
+    </tr>
+</table>
+{% else %}
+<p>
+    <span style="color: red; ">Error! You are not authorized to view this page.</span>
+    <a href="/">home</a>
+</p>
+{% endif %}
+
+</body>
+<script type='text/javascript'>
+    function preview_image() {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('image_preview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function modalShow(img, idx) {
+        var modal = document.getElementById("modal-" + idx);
+        var captionText = document.getElementById("modal-text" + idx);
+        modal.style.display = "flex";
+        var span = document.getElementById("close-" + idx);
+        span.onclick = function () {
+            modal.style.display = "none";
+            document.removeEventListener('keyup')
+        };
+        document.addEventListener('keyup', function (e) {
+            if (e.key === "Escape")
+                modal.style.display = "none";
+        });
+    }
+
+    function doScroll(e) {
+        var evt = window.event || e;
+        var delta = evt.detail ? evt.detail * (-120) : evt.wheelDelta;
+        var sc = document.getElementById("doScroll");
+        if (delta < 0) {
+            sc.scrollTo(sc.scrollLeft, sc.scrollTop + 10);
+        } else {
+            sc.scrollTo(sc.scrollLeft, sc.scrollTop - 10);
+        }
+    }
+
+    var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x
+
+    if (document.attachEvent) //if IE (and Opera depending on user setting)
+        document.attachEvent("on" + mousewheelevt, doScroll);
+    else if (document.addEventListener) //WC3 browsers
+        document.addEventListener(mousewheelevt, doScroll, false)
+
+</script>
+</html>
