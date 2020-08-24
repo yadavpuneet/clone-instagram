@@ -1,5 +1,3 @@
-# clone-instagram
-
 Overview
 
 This application is the replica of Instagram in simpler version. Using this application user can post in their timeline with image as well as text for reference. This application also allows different users can follow and followed by others using the app. They can also see other users posts and can also comment on them.
