@@ -1,9 +1,11 @@
 Overview
 
 This application is the replica of Instagram in simpler version. Using this application user can post in their timeline with image as well as text for reference. This application also allows different users can follow and followed by others using the app. They can also see other users posts and can also comment on them.
+
 1	INTRODUCTION
 1.1	Purpose and Scope
 The purpose of this application is to simple work on the Instagram model. Where different people can meet one another and post as well as comment on their wall.
+
 1.2	Project Requirements
 1.	Python 2.7
 2.	Google app engine
